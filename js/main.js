@@ -12,32 +12,60 @@ let amount2 = prompt("Во сколько это обойдется?", "0");
 let mission = 150000;
 let period = 6;
 
-console.log(typeof(money));
-console.log(typeof(income));
-console.log(typeof(deposit));
+let showTypeOf = function (data) {
+  console.log(data, typeof(data));
+};
 
-console.log(addExpenses.length);
-
-console.log("Период равен "+ period +" месяцев");
-console.log("Цель заработать " + mission + " рублей");
+showTypeOf(money);
+showTypeOf(income);
+showTypeOf(deposit);
 
 console.log(addExpenses.toLowerCase().split(", "));
-let budgetMonth = money - amount1 - amount2;
-console.log("Бюджет на месяц: ", budgetMonth);
-console.log("Цель будет достигнута за " + Math.ceil(mission / budgetMonth) + " мес.");
 
-let budgetDay = budgetMonth / 30;
+// Расходы за месяц
+
+const getExpensesMonth = function() {  
+  return (Number(amount1) + Number(amount2));
+};
+
+let sum = getExpensesMonth();
+console.log('Расходы за месяц: ', sum);
+
+// Накопления за месяц
+
+
+const getAccumulatedMonth = function() {  
+  return money - sum;
+};
+
+let accumulatedMonth = getAccumulatedMonth();
+ 
+// Период, за который будет достигнута цель
+
+const getTargetMonth = function() {  
+  return Math.ceil(mission / accumulatedMonth);
+};
+
+let months = getTargetMonth();
+console.log("Цель будет достигнута за " + months + " мес.");
+
+
+let budgetDay = accumulatedMonth / 30;
 console.log("Бюджет на день: ", Math.floor(budgetDay));
 
-if (budgetDay >= 1200) {
-  console.log("У вас высокий уровень дохода");
-}
-else {
-  if ((budgetDay >= 600) && (budgetDay < 1200)) { 
-    console.log("У вас средний уровень дохода");
+let getStatusIncome = function() {
+  if (budgetDay >= 1200) {
+    console.log("У вас высокий уровень дохода");
   }
-  else 
-  {
-    console.log("К сожалению, у вас уровень дохода ниже среднего");
+  else {
+    if ((budgetDay >= 600) && (budgetDay < 1200)) { 
+      console.log("У вас средний уровень дохода");
+    }
+    else 
+    {
+      console.log("К сожалению, у вас уровень дохода ниже среднего");
+    }
   }
-}
+};
+
+getStatusIncome();
