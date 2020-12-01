@@ -130,6 +130,7 @@ let appData = {
   }
 };
 
+
 appData.asking();
 appData.getExpensesMonth();
 appData.getBudget();
@@ -143,3 +144,33 @@ for (let key in appData) {
 
 appData.getInfoDeposit();
 console.log(appData.percentDeposit, appData.moneyDeposit, appData.calcSavedMoney());
+
+// переменные
+
+let btnCalc = document.getElementById('start');
+let btnPlusIncome = document.getElementsByTagName('button')[0];
+let btnPlusExpenses = document.getElementsByTagName('button')[1];
+let checkBox = document.querySelector('#deposit-check');
+let inputIncomeItem = document.querySelectorAll('.additional_income-item');
+
+let classValue = document.querySelectorAll('[class*="-value"]');
+
+let budgetMonth = classValue[0];
+let budgetDay = classValue[1];
+let expensesMonth = classValue[2];
+let incomeValue = classValue[3];
+let expensesValue = classValue[4];
+let incomePeriod = classValue[5];
+let targetMonth = classValue[6];
+
+let salaryAmount = document.querySelector('.salary-amount');
+let incomeTitle = document.querySelector('input.income-title');
+let incomeAmount = document.querySelector('.income-amount');
+let expensesTitle = document.querySelector('input.expenses-title');
+let expensesAmount = document.querySelector('.expenses-amount');
+let additionalExpenses = document.querySelector('.additional_expenses-item');
+let depositAmount = document.querySelector('.deposit-amount');
+let depositPercent = document.querySelector('.deposit-percent');
+let targetAmount = document.querySelector('.target-amount');
+let inputRange = document.querySelector('[type="range"]');
+
