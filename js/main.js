@@ -96,6 +96,7 @@ let appData = {
     this.expensesMonth = 0;
     this.percentDeposit = 0;
     this.moneyDeposit = 0;
+    this.resetBlocks();
     leftInputs = data.querySelectorAll('input[type=text]');
     leftInputs.forEach(function(item){
       item.value='';
@@ -105,7 +106,7 @@ let appData = {
     });
     inputRange.value = '1';
     periodAmount.textContent = '1';
-    appData.buttonCheck();
+    this.buttonCheck();
     
   },
   buttonCheck: function() {
@@ -149,23 +150,38 @@ let appData = {
     inputsPlaceholderSum =  document.querySelectorAll('[placeholder="Сумма"]');
     inputListener();
   },
+  resetBlocks: function() {
+    if (expensesItems.length > 1) {
+      for (let i = 1; i < expensesItems.length; i++) {
+        expensesItems[0].parentNode.removeChild(expensesItems[i]);
+      }
+    }
+    btnPlusExpenses.style.display = 'block';
+
+    if (incomeItems.length > 1) {
+      for (let i = 1; i < incomeItems.length; i++) {
+        incomeItems[0].parentNode.removeChild(incomeItems[i]);
+      }
+    }
+    btnPlusIncome.style.display = 'block';
+  },
   getExpenses: function() {
     expensesItems.forEach(function(item){
       let itemExpenses = item.querySelector('input.expenses-title').value;
       let cashExpenses = item.querySelector('.expenses-amount').value;
       if (itemExpenses !== '' && cashExpenses !== '') {
-        appData.expenses[itemExpenses] = cashExpenses;
+        this.expenses[itemExpenses] = cashExpenses;
       }
-    });
+    }, this);
   },
   getIncome: function() {
     incomeItems.forEach(function(item){
       let itemIncome = item.querySelector('input.income-title').value;
       let cashIncome  = item.querySelector('.income-amount').value;
       if (itemIncome !== '' && cashIncome !== '') {
-        appData.income[itemIncome] = cashIncome;
+        this.income[itemIncome] = cashIncome;
       }
-    });
+    }, this);
     for (let key in this.income ) {
       this.incomeMonth += +this.income[key];
     }
@@ -175,9 +191,9 @@ let appData = {
     addExpenses.forEach(function(item){
       item = item.trim();
       if (item !== '') {
-        appData.addExpenses.push(item);
+        this.addExpenses.push(item);
       }
-    });
+    }, this);
     for (let i = 0; i < this.addExpenses.length; i++)
     {
       let word = this.addExpenses[i];
@@ -192,9 +208,9 @@ let appData = {
     inputIncomeItem.forEach(function(item){
       let itemValue = item.value.trim();
       if (itemValue !== '') {
-        appData.addIncome.push(itemValue);
+        this.addIncome.push(itemValue);
       }
-    });
+    }, this);
     for (let i = 0; i < this.addIncome.length; i++)
     {
       let word = this.addIncome[i];
@@ -213,8 +229,9 @@ let appData = {
     incomeValue.value = this.addIncome.join(', ');
     targetMonth.value = Math.ceil(this.getTargetMonth());
     incomePeriod.value = this.calcPeriod();
+    const _data = this;
     inputRange.addEventListener('input', function(){
-      incomePeriod.value = appData.calcPeriod();
+      incomePeriod.value = _data.calcPeriod();
     });
   },
   getExpensesMonth: function() {  
@@ -253,15 +270,15 @@ let appData = {
   },
 
   getInfoDeposit: function() {
-    if (appData.deposit) {
+    if (this.deposit) {
       do {
-        appData.percentDeposit = prompt("Какой годовой процент?", 10);
+        this.percentDeposit = prompt("Какой годовой процент?", 10);
       }
-      while (!isNumber(appData.percentDeposit));
+      while (!isNumber(this.percentDeposit));
       do {
-        appData.moneyDeposit = prompt("Какая сумма заложена?", 10000);
+        this.moneyDeposit = prompt("Какая сумма заложена?", 10000);
       }
-      while (!isNumber(appData.moneyDeposit));
+      while (!isNumber(this.moneyDeposit));
     }
   },
 
