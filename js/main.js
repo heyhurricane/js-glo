@@ -292,6 +292,7 @@ appData.buttonCheck();
 inputListener();
 btnCalc.addEventListener('click', function(){
   appData.start();
+  leftInputs = data.querySelectorAll('input[type=text]');
   leftInputs.forEach(function(item){
    item.disabled = true;
   });
@@ -301,6 +302,7 @@ btnCalc.addEventListener('click', function(){
 
 btnCancel.addEventListener('click', function(){
   appData.reset();
+  leftInputs = data.querySelectorAll('input[type=text]');
   leftInputs.forEach(function(item){
    item.disabled = false;
   });
