@@ -107,6 +107,7 @@ AppData.prototype.reset = function() {
   this.percentDeposit = 0;
   this.moneyDeposit = 0;
   this.resetBlocks();
+  expensesItems = document.querySelectorAll('.expenses-items');
   leftInputs = data.querySelectorAll('input[type=text]');
   leftInputs.forEach(function(item){
     item.value='';
@@ -166,13 +167,14 @@ AppData.prototype.resetBlocks = function() {
     }
   }
   btnPlusExpenses.style.display = 'block';
-
+  expensesItems = document.querySelectorAll('.expenses-items');
   if (incomeItems.length > 1) {
     for (let i = 1; i < incomeItems.length; i++) {
       incomeItems[0].parentNode.removeChild(incomeItems[i]);
     }
   }
   btnPlusIncome.style.display = 'block';
+  incomeItems = document.querySelectorAll('.income-items');
 };
 AppData.prototype.getExpenses = function() {
   expensesItems.forEach(function(item){
