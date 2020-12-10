@@ -30,7 +30,8 @@ depositAmount = document.querySelector('.deposit-amount'),
 depositPercent = document.querySelector('.deposit-percent'),
 targetAmount = document.querySelector('.target-amount'),
 inputRange = document.querySelector('[type="range"]'),
-periodAmount = document.querySelector('.period-amount');
+periodAmount = document.querySelector('.period-amount'),
+depositBank = document.querySelector('.deposit-bank');
 
 let expensesItems = document.querySelectorAll('.expenses-items'), 
 leftInputs = data.querySelectorAll('input[type=text]'),
@@ -51,6 +52,19 @@ function inputListener() {
           item.value = item.value.replace(/[^\d]/,'');
       });
   });
+  
+  depositPercent.addEventListener('input', ()=> {
+          depositPercent.value = depositPercent.value.replace(/[^\d]/,'');
+          if (depositPercent.value > 100) {
+            alert ("Введите корректное значение в поле проценты");
+            btnCalc.disabled = true;
+          }
+          else {
+            if (salaryAmount.value.trim() === '') { btnCalc.disabled = true;}
+            else { btnCalc.disabled = false; }
+          }
+  });
+  
 }
 
 class AppData {
@@ -82,6 +96,7 @@ class AppData {
     this.budget = +salaryAmount.value;
     this.getExpInc();
     this.getExpensesMonth();
+    this.getInfoDeposit();
     this.getBudget();
     this.getAdd();
     this.showResult();
@@ -111,6 +126,13 @@ class AppData {
     });
     inputRange.value = '1';
     periodAmount.textContent = '1';
+    depositBank.style.display = 'none';
+    depositAmount.style.display = 'none';
+    depositPercent.style.display = 'none';
+    checkBox.checked = false;
+    depositBank.value = '';
+    depositAmount.value = '';
+    depositPercent.value = '';
     this.buttonCheck();
   }
 
@@ -243,7 +265,8 @@ class AppData {
   
   // Накопления за месяц
   getBudget() {  
-    this.budgetMonth = this.budget + this.incomeMonth -  this.expensesMonth;
+    const monthDeposit = this.moneyDeposit * this.percentDeposit / 100;
+    this.budgetMonth = this.budget + this.incomeMonth -  this.expensesMonth + monthDeposit;
     this.budgetDay = this.budgetMonth / 30;
   }
 
@@ -268,19 +291,44 @@ class AppData {
   }
   getInfoDeposit() {
     if (this.deposit) {
-      do {
-        this.percentDeposit = prompt("Какой годовой процент?", 10);
+        this.percentDeposit = depositPercent.value;
+        this.moneyDeposit = depositAmount.value;
       }
-      while (!isNumber(this.percentDeposit));
-      do {
-        this.moneyDeposit = prompt("Какая сумма заложена?", 10000);
-      }
-      while (!isNumber(this.moneyDeposit));
-    }
   }
 
   calcPeriod() {
     return this.budgetMonth * inputRange.value;
+  }
+
+  changePercent(){
+    const valueSelect = this.value;
+    if (valueSelect === 'other') {
+      depositPercent.value = '';
+      depositPercent.style.display = 'inline-block';
+    } 
+    else {
+      depositPercent.value = valueSelect;
+      depositPercent.style.display = 'none';
+    }
+  }
+
+  depositHandler() {
+    const _this = this;
+    if (checkBox.checked) {
+      depositBank.style.display = 'inline-block';
+      depositAmount.style.display = 'inline-block';
+      this.deposit = true;
+      depositBank.addEventListener('change', this.changePercent);
+    }
+    else {
+      depositBank.style.display = 'none';
+      depositAmount.style.display = 'none';
+      depositBank.value = '';
+      depositAmount.value = '';
+      depositPercent.value = '';
+      this.deposit = false;
+      depositBank.addEventListener('change', this.changePercent);
+    }
   }
 
   eventListners() {
@@ -313,7 +361,21 @@ class AppData {
       this.addBlock(btnPlusIncome);
     });
     inputRange.addEventListener('input', _this.changePeriod);
-    salaryAmount.addEventListener('input', () => btnCalc.disabled = salaryAmount.value.trim() === '');
+    salaryAmount.addEventListener('input', () => {
+     if (salaryAmount.value.trim() === '') {btnCalc.disabled =true;}
+     else {
+       if (depositPercent.value > 100) {
+         btnCalc.disabled =true;
+        }
+       else {
+         btnCalc.disabled =false;
+        }
+     }
+    });
+
+    checkBox.addEventListener('change', () => { 
+      this.depositHandler();
+    });
   }
 }
 
