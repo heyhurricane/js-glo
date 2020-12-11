@@ -90,6 +90,62 @@ class AppData {
     else { 
       btnCalc.disabled = false;
     } 
+    const countCookie = document.cookie.split(';').length;
+    if (countCookie !== localStorage.length+1) {
+      // кол-во cookie и длина localStorage разная - очищаем всё
+      let cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i];
+        let eqPos = cookie.indexOf("=");
+        let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+        document.cookie = name + '=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      }
+      localStorage.clear();
+    }
+    if (localStorage.length !== 0) {
+      // кол-во cookie и длина localStorage одинаковая - собираем массивы из cookie и localStorage
+      let cookies = document.cookie.split(";");
+      const arrCookie = [];
+      for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i];
+        let eqPos = cookie.indexOf("=");
+        let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        if (name.trim() !== 'isLoad') { arrCookie.push(name.trim()); }
+      }
+      const arrStorage = [];
+      for(let i=0; i<localStorage.length; i++) {
+        const key = localStorage.key(i);
+        arrStorage.push(key);
+      }
+      const setUnion = new Set([...arrCookie, ...arrStorage]); 
+      // если cookie и localStorage не совпадают, то размер Set будет != длине localStorage
+      if (setUnion.size !== localStorage.length) {
+        // очищаем всё
+        for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i];
+        let eqPos = cookie.indexOf("=");
+        let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+        document.cookie = name + '=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
+        localStorage.clear();
+      }
+      if (localStorage.length !== 0) {
+        // если cookie и localStorage совпадают, то грузим значения localStorage в инпуты
+        let count = 0;
+        classValue.forEach((item) => {
+          item.value = JSON.parse(localStorage.getItem(`rightInputs${count}`));
+          count++;
+        });
+        leftInputs = data.querySelectorAll('input[type=text]');
+        leftInputs.forEach((item) => {
+          item.disabled = true;
+        });
+        btnCalc.style.display = 'none';
+        btnCancel.style.display = 'block';
+      }
+    }
   }
 
   start() {
@@ -342,13 +398,22 @@ class AppData {
       });
       btnCalc.style.display = 'none';
       btnCancel.style.display = 'block';
+      let count = 0;
+      classValue.forEach((item) => {
+        localStorage.setItem(`rightInputs${count}`, JSON.stringify(item.value));
+        document.cookie = `rightInputs${count}=${item.value}`;
+        count++;
+      });
+      document.cookie = 'isLoad = true';
+      
     });
 
     btnCancel.addEventListener('click', () => {
+      localStorage.clear();
       this.reset();
       leftInputs = data.querySelectorAll('input[type=text]');
       leftInputs.forEach((item) => {
-      item.disabled = false;
+        item.disabled = false;
       });
       btnCancel.style.display = 'none';
       btnCalc.style.display = 'block';
