@@ -9,17 +9,11 @@ window.addEventListener('DOMContentLoaded', function() {
         timerSeconds = document.querySelector('#timer-seconds'),
         idInterval;
 
-    function addZero(hours, minutes, seconds) {
-      if (hours.length === 1) {
-        hours = '0' + hours;
+    function addZero(num) {
+      if (num.length === 1) {
+        num = '0' + num;
       }
-      if (minutes.length === 1) {
-        minutes = '0' + minutes;
-      }
-      if (seconds.length === 1) {
-        seconds = '0' + seconds;
-      }
-      return {hours, minutes, seconds};
+      return num;
     }
 
     function getTimeRemaining() {
@@ -29,10 +23,9 @@ window.addEventListener('DOMContentLoaded', function() {
           seconds = (Math.floor(timeRemaining % 60)).toString(),
           minutes = (Math.floor((timeRemaining / 60) % 60)).toString(),
           hours = (Math.floor((timeRemaining / 60) / 60)).toString();
-      const time = addZero(hours, minutes, seconds);
-      seconds = time.seconds;
-      minutes = time.minutes;
-      hours = time.hours;
+      seconds = addZero(seconds);
+      minutes = addZero(minutes);
+      hours = addZero(hours);
       return {timeRemaining, hours, minutes, seconds};
     }
 
@@ -48,7 +41,7 @@ window.addEventListener('DOMContentLoaded', function() {
         clearInterval(idInterval);
       }
     }
-
+    updateClock();
     idInterval = setInterval(updateClock, 1000);
 
   }
