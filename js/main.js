@@ -46,4 +46,76 @@ window.addEventListener('DOMContentLoaded', function() {
 
   }
   countTimer('16 Dec 2020');
+
+  // меню
+  const toggleMenu = () => {
+    const btnMenu = document.querySelector('.menu'),
+          menu = document.querySelector('menu'),
+          closeBtn = document.querySelector('.close-btn'),
+          menuItems = menu.querySelectorAll('ul>li');
+
+    const handlerMenu = () => {
+      menu.classList.toggle('active-menu');
+    };
+
+    btnMenu.addEventListener('click', handlerMenu);
+
+    closeBtn.addEventListener('click', handlerMenu);
+
+    menuItems.forEach((elem) => {
+      elem.addEventListener('click', handlerMenu);
+    });
+  };
+
+  toggleMenu();
+
+  // pop-up
+
+  const popupContent = document.querySelector('.popup-content');
+  let animateInterval, count = 0;
+
+  function popupAnimation() {
+    animateInterval = requestAnimationFrame(popupAnimation);
+    count += 3;
+    const widthWindow = window.screen.width;
+    let halfWindow = parseInt(popupContent.style.left);
+    if (isNaN(halfWindow)) { halfWindow = 0; }
+    const width = 0.38 * widthWindow;
+    if (widthWindow < 768) {
+      cancelAnimationFrame(animateInterval);
+      popupContent.style.left = '30%';
+    }
+    else if (halfWindow < width) {
+      popupContent.style.left = 2*count + 'px';
+    }
+    else {
+      cancelAnimationFrame(animateInterval);
+    }
+  }
+
+  const togglePopUp = () => {
+    count = 0;
+    // popupContent.style.left = count + 'px';
+    const popup = document.querySelector('.popup'), 
+          btnPopUp = document.querySelectorAll('.popup-btn'),
+          closePopUp = document.querySelector('.popup-close');
+    btnPopUp.forEach((elem) => {
+      elem.addEventListener('click', () => {
+        animateInterval = requestAnimationFrame(popupAnimation);
+        popup.style.display = 'block';
+      });
+    });
+    closePopUp.addEventListener('click', () => {
+        popup.style.display = 'none';
+        count = 0;
+        popupContent.style.left = count + 'px';
+      });
+
+  };
+
+  togglePopUp();
+
+
+
+  
 });
