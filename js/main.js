@@ -6,7 +6,8 @@ window.addEventListener('DOMContentLoaded', function() {
   function countTimer(deadline) {
     let timerHours = document.querySelector('#timer-hours'),
         timerMinutes = document.querySelector('#timer-minutes'),
-        timerSeconds = document.querySelector('#timer-seconds');
+        timerSeconds = document.querySelector('#timer-seconds'),
+        idInterval;
 
     function addZero(hours, minutes, seconds) {
       if (hours.length === 1) {
@@ -44,10 +45,11 @@ window.addEventListener('DOMContentLoaded', function() {
         timerHours.textContent = '00';
         timerMinutes.textContent = '00';
         timerSeconds.textContent = '00';
+        clearInterval(idInterval);
       }
     }
 
-    setInterval(updateClock, 1000);
+    idInterval = setInterval(updateClock, 1000);
 
   }
   countTimer('16 Dec 2020');
