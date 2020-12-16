@@ -45,14 +45,15 @@ window.addEventListener('DOMContentLoaded', function() {
     idInterval = setInterval(updateClock, 1000);
 
   }
-  countTimer('16 Dec 2020');
+  countTimer('17 Dec 2020');
 
   // меню
   const toggleMenu = () => {
     const btnMenu = document.querySelector('.menu'),
           menu = document.querySelector('menu'),
           closeBtn = document.querySelector('.close-btn'),
-          menuItems = menu.querySelectorAll('ul>li');
+          menuItems = menu.querySelectorAll('ul>li>a');
+          //menuLinks = menuItems.querySelectorAll('a');
 
     const handlerMenu = () => {
       menu.classList.toggle('active-menu');
@@ -115,7 +116,22 @@ window.addEventListener('DOMContentLoaded', function() {
 
   togglePopUp();
 
+  // scroll
 
+  const scrollLinks = document.querySelectorAll('a[href*="#"]')
 
+  const scrollingDown = () => {
+    scrollLinks.forEach((anchor) => {
+      anchor.addEventListener('click', (elem) => {
+        elem.preventDefault();
+        const blockID = anchor.getAttribute('href').substr(1);
+        document.getElementById(blockID).scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      });
+    });
+  };
   
+  scrollingDown();
 });
