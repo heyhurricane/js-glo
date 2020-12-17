@@ -287,7 +287,7 @@ window.addEventListener('DOMContentLoaded', function() {
     slider.addEventListener('mouseover', (event) => {
       let target = event.target;
 
-      if (!target.matches('.portfolio-btn, .dot')) {
+      if (target.matches('.portfolio-btn, .dot')) {
         stopSlide();
       }
     });
@@ -295,7 +295,7 @@ window.addEventListener('DOMContentLoaded', function() {
     slider.addEventListener('mouseout', (event) => {
       let target = event.target;
 
-      if (!target.matches('.portfolio-btn, .dot')) {
+      if (target.matches('.portfolio-btn, .dot')) {
         startSlide(1500);
       }
     });
