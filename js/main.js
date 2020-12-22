@@ -3,20 +3,20 @@ window.addEventListener('DOMContentLoaded', function() {
 
   
   // таймер
-  function countTimer(deadline) {
+  const countTimer = (deadline) => {
     let timerHours = document.querySelector('#timer-hours'),
         timerMinutes = document.querySelector('#timer-minutes'),
         timerSeconds = document.querySelector('#timer-seconds'),
         idInterval;
 
-    function addZero(num) {
+    const addZero = (num) => {
       if (num.length === 1) {
         num = '0' + num;
       }
       return num;
-    }
+    };
 
-    function getTimeRemaining() {
+    const getTimeRemaining = () => {
       let dateStop = new Date(deadline).getTime(),
           dateNow = new Date().getTime(),
           timeRemaining = (dateStop - dateNow) / 1000,
@@ -27,9 +27,9 @@ window.addEventListener('DOMContentLoaded', function() {
       minutes = addZero(minutes);
       hours = addZero(hours);
       return {timeRemaining, hours, minutes, seconds};
-    }
+    };
 
-    function updateClock() {
+    const updateClock = () => {
       let timer = getTimeRemaining();
       timerHours.textContent = timer.hours;
       timerMinutes.textContent = timer.minutes;
@@ -45,7 +45,7 @@ window.addEventListener('DOMContentLoaded', function() {
     idInterval = setInterval(updateClock, 1000);
 
   }
-  countTimer('17 Dec 2020');
+  countTimer('23 Dec 2020');
 
   // меню
   const toggleMenu = () => {
@@ -329,5 +329,53 @@ window.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // калькулятор
+
+  const calc = (price = 100) => {
+    const calcBlock = document.querySelector('.calc-block'),
+          calcType = document.querySelector('.calc-type'),
+          calcSquare = document.querySelector('.calc-square'),
+          calcCount = document.querySelector('.calc-count'),
+          calcDay = document.querySelector('.calc-day'),
+          totalValue = document.getElementById('total');
+
+    const countSum = () => {
+      let total = 0,
+      countValue = 1,
+      dayValue = 1;
+      const typeValue = calcType.options[calcType.selectedIndex].value, 
+            squareValue = +calcSquare.value;
+      
+      if (calcCount.value > 1) {
+        countValue += (calcCount.value - 1) / 10;
+      }
+
+      if (calcDay.value && calcDay.value < 5) {
+        dayValue *= 2;
+      } else if (calcDay.value && calcDay.value < 10) {
+        dayValue *= 1.5;
+      }
+
+      if (typeValue && squareValue) {
+        total = price * typeValue * squareValue * countValue * dayValue;
+      }
+      totalValue.textContent = total;
+    };
+
+
+    calcBlock.addEventListener('change', (event) => {
+      const target = event.target;
+      if (target.matches('.calc-type') || target.matches('.calc-square') ||
+      target.matches('.calc-day') || target.matches('.calc-count')) {
+        countSum();
+      }
+
+    });
+    
+
+
+  };
+
+  calc(100);
 
 });
