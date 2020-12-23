@@ -44,7 +44,7 @@ window.addEventListener('DOMContentLoaded', function() {
     updateClock();
     idInterval = setInterval(updateClock, 1000);
 
-  }
+  };
   countTimer('23 Dec 2020');
 
   // меню
@@ -329,6 +329,36 @@ window.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  const debounce = (f, t) => {
+    return function (args) {
+      let previousCall = this.lastCall;
+      this.lastCall = Date.now();
+      if (previousCall && ((this.lastCall - previousCall) <= t)) {
+        clearTimeout(this.lastCallTimer);
+      }
+      this.lastCallTimer = setTimeout(() => f(args), t);
+    };
+  };
+
+  let animateTotal = false;
+  let timer;
+
+    // АНИМАЦИЯ ЦИФР
+  const animatedTotal = (obj, start, end) => {
+    if (start === end) { return;}
+    let count2 = start;
+    const stepTime = 2;
+    animateTotal = true;
+    timer = setInterval(function() {
+        count2++;
+        obj.textContent = count2;
+        if (count2 === end) {
+          animateTotal = false;
+          clearInterval(timer);
+        }
+    }, stepTime);
+  };   
+
   // калькулятор
 
   const calc = (price = 100) => {
@@ -359,7 +389,13 @@ window.addEventListener('DOMContentLoaded', function() {
       if (typeValue && squareValue) {
         total = Math.round(price * typeValue * squareValue * countValue * dayValue);
       }
-      totalValue.textContent = total;
+      if (animateTotal) {
+        clearInterval(timer);
+        totalValue.textContent = 0;
+      }
+      animatedTotal(totalValue, 0, total);
+     
+      
     };
 
 
@@ -372,6 +408,10 @@ window.addEventListener('DOMContentLoaded', function() {
 
     });
     
+   
+
+    
+
 
 
   };
