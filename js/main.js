@@ -347,10 +347,10 @@ window.addEventListener('DOMContentLoaded', function() {
   const animatedTotal = (obj, start, end) => {
     if (start === end) { return;}
     let count2 = start;
-    const stepTime = 2;
+    const stepTime = 1;
     animateTotal = true;
     timer = setInterval(function() {
-        count2++;
+        count2+=10;
         obj.textContent = count2;
         if (count2 === end) {
           animateTotal = false;
