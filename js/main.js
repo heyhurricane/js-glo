@@ -349,13 +349,28 @@ window.addEventListener('DOMContentLoaded', function() {
     let count2 = start;
     const stepTime = 1;
     animateTotal = true;
+    const step = end - start;
     timer = setInterval(function() {
-        count2+=10;
-        obj.textContent = count2;
-        if (count2 === end) {
-          animateTotal = false;
-          clearInterval(timer);
+      if (end.toString().length >= 5) {
+        if (count2 < (end - (end % 1000))) {
+          count2 += 1000;
         }
+        else {
+          if (count2 < (end - (end % 100))) {
+            count2 += 100;
+          }
+          else { count2 += 10; }
+        }
+      }
+      else {
+        count2 += 10;
+      }    
+      if (count2 >= end) {
+        animateTotal = false;
+        clearInterval(timer);
+        obj.textContent = end;
+      }
+      else { obj.textContent = count2; }
     }, stepTime);
   };   
 
