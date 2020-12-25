@@ -466,9 +466,10 @@ window.addEventListener('DOMContentLoaded', function() {
           successMessage = 'Спасибо! Мы скоро с Вами свяжемся';
 
     const forms = document.querySelectorAll('[name="user_form"]');
-    // const form = document.getElementById('form1');
-    console.log('forms: ', forms);
+
+
     const statusMessage = document.createElement('div');
+    
     statusMessage.style.cssText = 'font-size: 2rem;';
 
     const postData = (body, outputData, errorData) => {
@@ -496,9 +497,19 @@ window.addEventListener('DOMContentLoaded', function() {
         if (form.getAttribute('id') === 'form3') { 
           statusMessage.style.color = '#FFF';
         }
-      
+        statusMessage.textContent = '';
+        statusMessage.classList.add('preloader__row');
+        const messageItem = document.createElement('div');
+        messageItem.classList.add('preloader__item');
+        statusMessage.appendChild(messageItem);
+        statusMessage.appendChild(messageItem);
+        statusMessage.classList.add('loaded');
         form.appendChild(statusMessage);
-        statusMessage.textContent = loadMessage;
+        // window.setTimeout(function () {
+        //   statusMessage.classList.add('loaded');
+        //   statusMessage.classList.remove('loaded_hiding');
+        // }, 500);
+
         const formData = new FormData(form);
         let body = {};
       
@@ -507,17 +518,20 @@ window.addEventListener('DOMContentLoaded', function() {
         });
 
         postData(body, () => {
+          statusMessage.classList.remove('preloader__row');
+          statusMessage.classList.remove('loaded');
           statusMessage.textContent = successMessage;
+          const inputs = form.querySelectorAll('input');
+          inputs.forEach((input) => {
+            input.value = '';
+          });
+
         }, (error) => { 
+          statusMessage.classList.remove('preloader__row');
+          statusMessage.classList.remove('loaded');
           statusMessage.textContent = errorMessage;
           console.error(error);
         });
-
-        const inputs = form.querySelectorAll('input');
-        inputs.forEach((input) => {
-          input.value = '';
-        });
-
 
       });
     });
