@@ -319,15 +319,40 @@ window.addEventListener('DOMContentLoaded', function() {
     });
   });
   
-  // ввод в калькуляторе только цифр
+  // валидация
 
-  const inputs = document.querySelectorAll('input.calc-item');
+  const validation = () => {
 
-  inputs.forEach((input) => {
-    input.addEventListener('input', () => {
-      input.value = input.value.replace(/[^\d]/,'');
+    const inputs = document.querySelectorAll('input.calc-item');
+
+    inputs.forEach((input) => {
+      input.addEventListener('input', () => {
+        input.value = input.value.replace(/[^\d]/,'');
+      });
     });
-  });
+    
+    const phoneInputs = document.querySelectorAll('.form-phone');
+    phoneInputs.forEach((phoneInput) => {
+      phoneInput.addEventListener('input', () => {
+        phoneInput.value = phoneInput.value.replace(/[^\d\+]/,'');
+      });
+    });
+
+    const nameInputs = document.querySelectorAll('[name="user_name"]');
+    nameInputs.forEach((nameInput) => {
+      nameInput.addEventListener('input', () => {
+        nameInput.value = nameInput.value.replace(/[^а-яА-Я\s]/,'');
+      });
+    });
+
+
+    const messageInput = document.querySelector('[name="user_message"]');
+    messageInput.addEventListener('input', () => {
+        messageInput.value = messageInput.value.replace(/[^а-яА-Я\s\W\d]/,'');
+      });
+  };
+
+  validation();
 
   const debounce = (f, t) => {
     return function (args) {
@@ -432,5 +457,74 @@ window.addEventListener('DOMContentLoaded', function() {
   };
 
   calc(100);
+
+  // send-ajax-form
+
+  const sendForm = () => {
+    const errorMessage ='Что-то пошло не так...',
+          loadMessage = 'Загрузка...',
+          successMessage = 'Спасибо! Мы скоро с Вами свяжемся';
+
+    const forms = document.querySelectorAll('[name="user_form"]');
+    // const form = document.getElementById('form1');
+    console.log('forms: ', forms);
+    const statusMessage = document.createElement('div');
+    statusMessage.style.cssText = 'font-size: 2rem;';
+
+    const postData = (body, outputData, errorData) => {
+      const request = new XMLHttpRequest();
+      
+      request.addEventListener('readystatechange', () => {
+        if (request.readyState !== 4) {
+          return;
+        }
+        if (request.status === 200) {
+          outputData();
+        } else {
+          errorData(request.status);
+        }
+      });
+      request.open('POST', './server.php');
+      request.setRequestHeader('Content-Type', 'application/json');
+      
+      request.send(JSON.stringify(body));
+    };
+
+    forms.forEach((form) => {
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (form.getAttribute('id') === 'form3') { 
+          statusMessage.style.color = '#FFF';
+        }
+      
+        form.appendChild(statusMessage);
+        statusMessage.textContent = loadMessage;
+        const formData = new FormData(form);
+        let body = {};
+      
+        formData.forEach((val, key) => {
+          body[key] = val;
+        });
+
+        postData(body, () => {
+          statusMessage.textContent = successMessage;
+        }, (error) => { 
+          statusMessage.textContent = errorMessage;
+          console.error(error);
+        });
+
+        const inputs = form.querySelectorAll('input');
+        inputs.forEach((input) => {
+          input.value = '';
+        });
+
+
+      });
+    });
+
+  };
+
+  sendForm();
+
 
 });
