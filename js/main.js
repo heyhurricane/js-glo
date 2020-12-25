@@ -504,34 +504,60 @@ window.addEventListener('DOMContentLoaded', function() {
         statusMessage.appendChild(messageItem);
         statusMessage.appendChild(messageItem);
         statusMessage.classList.add('loaded');
-        form.appendChild(statusMessage);
-        // window.setTimeout(function () {
-        //   statusMessage.classList.add('loaded');
-        //   statusMessage.classList.remove('loaded_hiding');
-        // }, 500);
-
-        const formData = new FormData(form);
-        let body = {};
-      
-        formData.forEach((val, key) => {
-          body[key] = val;
+        const inputs = form.querySelectorAll('input');
+        let count = 0;
+        inputs.forEach((input) => {
+          const mistake = document.createElement('div');
+          mistake.classList.add('mistake');
+          console.log(input.parentNode.childNodes);
+          if (input.parentNode.childNodes.length === 4) { input.parentNode.childNodes[3].remove(); }
+          mistake.style.cssText = 'font-size: 1rem; color: red;';
+          if (form.getAttribute('id') === 'form1') { 
+            mistake.style.cssText += 'margin-top: -2rem;';
+          }
+          if ((input.classList.contains('form-name') || input.classList.contains('top-form')) && 
+          (input.value.length < 2 || input.value.length > 50)) {
+            mistake.textContent = 'Имя должно быть от 2 до 50 символов';
+            input.parentNode.append(mistake);
+            count++;
+          }
+          if (input.classList.contains('form-phone') && input.value.length < 11) {
+            mistake.textContent = 'Номер должен содержать 11 символов';
+            input.parentNode.append(mistake);
+            count++;
+          }
+          if (input.classList.contains('form-email') && !(input.value.match(/^[-._a-z0-9]+@(?:[a-z0-9][-a-z0-9]+\.)+[a-z]{2,6}$/))) {
+            mistake.textContent = 'Введите в формте: name@domain.com';
+            input.parentNode.append(mistake);
+            count++;
+          }
         });
+        if (count === 0) {
+          form.append(statusMessage);
 
-        postData(body, () => {
-          statusMessage.classList.remove('preloader__row');
-          statusMessage.classList.remove('loaded');
-          statusMessage.textContent = successMessage;
-          const inputs = form.querySelectorAll('input');
-          inputs.forEach((input) => {
-            input.value = '';
+          const formData = new FormData(form);
+          let body = {};
+        
+          formData.forEach((val, key) => {
+            body[key] = val;
           });
+          
+          postData(body, () => {
+            statusMessage.classList.remove('preloader__row');
+            statusMessage.classList.remove('loaded');
+            statusMessage.textContent = successMessage;
+            
+            inputs.forEach((input) => {
+              input.value = '';
+            });
 
-        }, (error) => { 
-          statusMessage.classList.remove('preloader__row');
-          statusMessage.classList.remove('loaded');
-          statusMessage.textContent = errorMessage;
-          console.error(error);
-        });
+            }, (error) => { 
+              statusMessage.classList.remove('preloader__row');
+              statusMessage.classList.remove('loaded');
+              statusMessage.textContent = errorMessage;
+              console.error(error);
+          });
+        }
 
       });
     });
