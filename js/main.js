@@ -472,23 +472,26 @@ window.addEventListener('DOMContentLoaded', function() {
     
     statusMessage.style.cssText = 'font-size: 2rem;';
 
-    const postData = (body, outputData, errorData) => {
-      const request = new XMLHttpRequest();
-      
-      request.addEventListener('readystatechange', () => {
-        if (request.readyState !== 4) {
-          return;
-        }
-        if (request.status === 200) {
-          outputData();
-        } else {
-          errorData(request.status);
-        }
+    const postData = (body/*, outputData, errorData*/) => {
+      return new Promise((resolve, reject) => {
+        const request = new XMLHttpRequest();
+        request.addEventListener('readystatechange', () => {
+          if (request.readyState !== 4) {
+            return;
+          }
+          if (request.status === 200) {
+            resolve();
+            // outputData();
+          } else {
+            reject();
+            // errorData(request.status);
+          }
+        });
+        request.open('POST', './server.php');
+        request.setRequestHeader('Content-Type', 'application/json');
+        
+        request.send(JSON.stringify(body));
       });
-      request.open('POST', './server.php');
-      request.setRequestHeader('Content-Type', 'application/json');
-      
-      request.send(JSON.stringify(body));
     };
 
     forms.forEach((form) => {
@@ -498,18 +501,12 @@ window.addEventListener('DOMContentLoaded', function() {
           statusMessage.style.color = '#FFF';
         }
         statusMessage.textContent = '';
-        statusMessage.classList.add('preloader__row');
-        const messageItem = document.createElement('div');
-        messageItem.classList.add('preloader__item');
-        statusMessage.appendChild(messageItem);
-        statusMessage.appendChild(messageItem);
-        statusMessage.classList.add('loaded');
         const inputs = form.querySelectorAll('input');
         let count = 0;
         inputs.forEach((input) => {
           const mistake = document.createElement('div');
           mistake.classList.add('mistake');
-          console.log(input.parentNode.childNodes);
+          // console.log(input.parentNode.childNodes);
           if (input.parentNode.childNodes.length === 4) { input.parentNode.childNodes[3].remove(); }
           mistake.style.cssText = 'font-size: 1rem; color: red;';
           if (form.getAttribute('id') === 'form1') { 
@@ -533,6 +530,12 @@ window.addEventListener('DOMContentLoaded', function() {
           }
         });
         if (count === 0) {
+          statusMessage.classList.add('preloader__row');
+          const messageItem = document.createElement('div');
+          messageItem.classList.add('preloader__item');
+          statusMessage.appendChild(messageItem);
+          statusMessage.appendChild(messageItem);
+          statusMessage.classList.add('loaded');
           form.append(statusMessage);
 
           const formData = new FormData(form);
@@ -542,21 +545,21 @@ window.addEventListener('DOMContentLoaded', function() {
             body[key] = val;
           });
           
-          postData(body, () => {
-            statusMessage.classList.remove('preloader__row');
-            statusMessage.classList.remove('loaded');
-            statusMessage.textContent = successMessage;
-            
-            inputs.forEach((input) => {
-              input.value = '';
-            });
-
-            }, (error) => { 
+          postData(body)
+            .then(() => {
+              statusMessage.classList.remove('preloader__row');
+              statusMessage.classList.remove('loaded');
+              statusMessage.textContent = successMessage;
+              inputs.forEach((input) => {
+                input.value = '';
+              });
+            })
+            .catch((error) => { 
               statusMessage.classList.remove('preloader__row');
               statusMessage.classList.remove('loaded');
               statusMessage.textContent = errorMessage;
               console.error(error);
-          });
+            });
         }
 
       });
@@ -566,5 +569,22 @@ window.addEventListener('DOMContentLoaded', function() {
 
   sendForm();
 
+  /*
+  const valid = new Validator({
+    selector: '#form1',
+    pattern: {},
+    method: {
+      'phone': [
+        ['notEmpty'],
+        ['pattern', 'phone']
+      ],
+      'email': [
+        ['notEmpty'],
+        ['pattern', 'email']
+      ]
+    }
+  });
+
+  valid.init();*/
 
 });
