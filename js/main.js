@@ -89,11 +89,11 @@ window.addEventListener('DOMContentLoaded', function() {
   // pop-up
 
   const popupContent = document.querySelector('.popup-content');
-  let animateInterval, count = 0;
+  let animateInterval, countPopUp = 0;
 
   function popupAnimation() {
     animateInterval = requestAnimationFrame(popupAnimation);
-    count += 3;
+    countPopUp += 3;
     const widthWindow = window.screen.width;
     let halfWindow = parseInt(popupContent.style.left);
     if (isNaN(halfWindow)) { halfWindow = 0; }
@@ -103,18 +103,19 @@ window.addEventListener('DOMContentLoaded', function() {
       popupContent.style.left = '30%';
     }
     else if (halfWindow < width) {
-      popupContent.style.left = 2*count + 'px';
+      popupContent.style.left = 2*countPopUp + 'px';
     }
     else {
       cancelAnimationFrame(animateInterval);
     }
   }
 
+  const popup = document.querySelector('.popup');
+
   const togglePopUp = () => {
-    count = 0;
+    countPopUp = 0;
     // popupContent.style.left = count + 'px';
-    const popup = document.querySelector('.popup'), 
-          btnPopUp = document.querySelectorAll('.popup-btn');
+    const btnPopUp = document.querySelectorAll('.popup-btn');
 
     btnPopUp.forEach((elem) => {
       elem.addEventListener('click', () => {
@@ -127,15 +128,15 @@ window.addEventListener('DOMContentLoaded', function() {
        let target = event.target;
        if (target.classList.contains('popup-close')) {
         popup.style.display = 'none';
-        count = 0;
-        popupContent.style.left = count + 'px';
+        countPopUp = 0;
+        popupContent.style.left = countPopUp + 'px';
        }
        else {
         target = target.closest('.popup-content'); 
         if (!target) {
           popup.style.display = 'none';
-          count = 0;
-          popupContent.style.left = count + 'px';
+          countPopUp = 0;
+          popupContent.style.left = countPopUp + 'px';
         }
        }
     });
@@ -472,8 +473,15 @@ window.addEventListener('DOMContentLoaded', function() {
     
     statusMessage.style.cssText = 'font-size: 2rem;';
 
-    const postData = (body/*, outputData, errorData*/) => {
-      return new Promise((resolve, reject) => {
+    const postData = (body) => {
+      return fetch('./server.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+     /* return new Promise((resolve, reject) => {
         const request = new XMLHttpRequest();
         request.addEventListener('readystatechange', () => {
           if (request.readyState !== 4) {
@@ -491,7 +499,7 @@ window.addEventListener('DOMContentLoaded', function() {
         request.setRequestHeader('Content-Type', 'application/json');
         
         request.send(JSON.stringify(body));
-      });
+      });*/
     };
 
     forms.forEach((form) => {
@@ -546,19 +554,33 @@ window.addEventListener('DOMContentLoaded', function() {
           });
           
           postData(body)
-            .then(() => {
+            .then((response) => {
+              if (response.status !== 200) {
+                throw new Error("Status network isn't 200");
+              }
               statusMessage.classList.remove('preloader__row');
               statusMessage.classList.remove('loaded');
               statusMessage.textContent = successMessage;
               inputs.forEach((input) => {
                 input.value = '';
               });
+              setTimeout(() => {
+                statusMessage.textContent = '';
+                if (form.getAttribute('id') === 'form3') {
+                  popup.style.display = 'none';
+                  countPopUp = 0;
+                  popupContent.style.left = countPopUp + 'px';
+                }
+              }, 4000);
             })
             .catch((error) => { 
               statusMessage.classList.remove('preloader__row');
               statusMessage.classList.remove('loaded');
               statusMessage.textContent = errorMessage;
               console.error(error);
+              setTimeout(() => {
+                statusMessage.textContent = '';
+              }, 4000);
             });
         }
 
