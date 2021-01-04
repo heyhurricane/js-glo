@@ -67,3 +67,8 @@
 .loaded .preloader {
   display: none;
 }
+
+input:invalid,
+input:required {
+  box-shadow: none;
+}
