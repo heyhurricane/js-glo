@@ -27,7 +27,7 @@ const validation = () => {
 
   const messageInput = document.querySelector('[name="user_message"]');
   messageInput.addEventListener('input', () => {
-      messageInput.value = messageInput.value.replace(/[^а-яА-Я\s\W\d]/,'');
+      messageInput.value = messageInput.value.replace(/[^а-яА-Я\.\,\!\?\;\:\"\s\d]/,'');
     });
 };
 
