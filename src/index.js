@@ -8,6 +8,7 @@ import tabs from './modules/tabs';
 import slider from './modules/slider';
 import changeImages from './modules/changeImages';
 import validation from './modules/validation';
+import maskPhone from './modules/maskPhone';
 import calc from './modules/calc';
 import sendForm from './modules/sendForm';
 // таймер
@@ -26,6 +27,8 @@ slider();
 changeImages();
 // валидация
 validation();
+//маска
+maskPhone('.form-phone', '+_ (___) ___-__-__');
 // калькулятор
 calc(100);
 // send-ajax-form

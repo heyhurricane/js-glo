@@ -57,7 +57,7 @@ const sendForm = () => {
         mistake.classList.add('mistake');
         // console.log(input.parentNode.childNodes);
         if (input.parentNode.childNodes.length === 4) { input.parentNode.childNodes[3].remove(); }
-        mistake.style.cssText = 'font-size: 1rem; color: red;';
+        mistake.style.cssText = 'font-size: 1.1rem; color: tomato;';
         if (form.getAttribute('id') === 'form1') { 
           mistake.style.cssText += 'margin-top: -2rem;';
         }
@@ -67,13 +67,13 @@ const sendForm = () => {
           input.parentNode.append(mistake);
           count++;
         }
-        if (input.classList.contains('form-phone') && input.value.length < 11) {
+        if (input.classList.contains('form-phone') && input.value.length < 18) {
           mistake.textContent = 'Номер должен содержать 11 символов';
           input.parentNode.append(mistake);
           count++;
         }
         if (input.classList.contains('form-email') && !(input.value.match(/^[-._a-z0-9]+@(?:[a-z0-9][-a-z0-9]+\.)+[a-z]{2,6}$/))) {
-          mistake.textContent = 'Введите в формте: name@domain.com';
+          mistake.textContent = 'Введите в формате: name@domain.com';
           input.parentNode.append(mistake);
           count++;
         }

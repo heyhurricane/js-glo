@@ -72,3 +72,7 @@ input:invalid,
 input:required {
   box-shadow: none;
 }
+
+/* .popup-content {
+  margin: auto;
+} */
